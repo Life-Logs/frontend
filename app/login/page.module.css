@@ -1,0 +1,74 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6rem;
+  min-height: 100vh;
+  background-color: #E2F2D5;
+}
+
+.input {
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid black;
+  padding-bottom: 8px;
+  width: 230px;
+}
+
+.loginButton {
+  width: 200px;
+  height: 50px;
+  padding: 10px;
+  background-color: #64705B;
+  color: white;
+  border: none;
+  outline: none;
+  border-radius: 10px;
+}
+
+.checkBoxText {
+  font-size: 12px;
+  font-weight: bold;
+  color : #64705B;
+  margin-left: 5px;
+}
+
+.title {
+  font-size: 45px;
+  color: #64705B;
+  font-style: italic;
+  font-weight: 200;
+}
+
+.email {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.passwordCheckBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-top: -50px;
+}
+
+.checkBoxWrapper{
+  margin-top: 15px;
+}
+
+.signupForget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.signup {
+  font-weight: bold;
+  color: #64705B;
+}
+
+.forget {
+  margin-top: 10px;
+}

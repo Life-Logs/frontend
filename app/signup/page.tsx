@@ -17,12 +17,7 @@ import styled from 'styled-components'
 export default function Home() {
   return (
     <div className={styles.main}>
-      My Easy Life
-      <input placeholder='이메일'/>
-      <input placeholder='비밀번호'/>
-      <button>로그인</button>
-      <div>회원가입</div>
-      <div>계정 정보를 잊으셨습니까?</div>
+signup
     </div>
   )
 }
