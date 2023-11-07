@@ -15,11 +15,13 @@
     border-radius: 10px;
     padding: 20px;
     background-color: #F5FDEE;
+    border: 1px solid red;
 }
 
 .routineBoxTitle {
     font-size: 18px;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .routineBoxContent {
@@ -39,4 +41,14 @@
 
 .routineBoxContentWrap{
     margin-top: 15px;
+}
+
+.routineHr{
+    margin: 20px 0;
+}
+
+.tag{
+    color: #64705B;
+    font-size: 12px;
+    font-weight: bold;
 }

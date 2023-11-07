@@ -15,6 +15,7 @@ import styled from 'styled-components'
 // `
 
 export default function Home() {
+
   return (
     <div className={styles.main}>
       My Easy Life
