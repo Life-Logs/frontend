@@ -17,6 +17,10 @@ export default function Home() {
         </div>
       </div>
       <button className={styles.loginButton}>로그인</button>
+      <button 
+        className={styles.googleButton}
+        // onClick={() => GoogleLoginTest()}
+      >Google로 시작하기</button>
       <div className={styles.signupForget}>
         <div className={styles.signup}>회원가입</div>
         <div className={styles.forget}>계정 정보를 잊으셨습니까?</div>
