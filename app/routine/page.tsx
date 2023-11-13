@@ -48,6 +48,7 @@ const RoutineBox = styled.div`
     padding: 20px;
     background-color: #F5FDEE;
     user-select: none;
+    transition: 0.5s;
 `
 const TitleWrap = styled.div`
     display: flex;

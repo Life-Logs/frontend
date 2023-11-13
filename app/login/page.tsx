@@ -9,7 +9,8 @@ export default function Home() {
     const cookie = document.cookie
     console.log(cookie)
 
-    axios.get('https://lifelog.devtkim.com/auth/test-guard2', {
+    axios.get('https://lifelog.devtkim.com/auth/to-google', {
+    // axios.get('https://lifelog.devtkim.com/auth/test-guard2', {
       headers: {
         Cookie : cookie
       }
