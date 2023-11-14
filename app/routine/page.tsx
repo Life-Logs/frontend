@@ -4,15 +4,34 @@ import styles from './page.module.css'
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { BiEdit } from 'react-icons/bi';
+import axios from 'axios';
 
+interface MockData {
+    title: string;
+    category: string;
+    repeat: string;
+    active: string;
+    tag: string;
+  }
+  
 export default function Routine() {
     const [fold, setFold] = useState(false)
+    const [data, setData] = useState<MockData[]>([])
+
+    useEffect(() => {
+        axios('/data/mockData.json')
+        .then((response) => {
+            const responseValue = response.data.mockData
+            setData(responseValue)
+        })
+    }, [])
 
     return (
         <div className={styles.main}>
-            <RoutineBox aaa={fold}>
+            {data && data.map((e, i) => (
+                <RoutineBox key={i} aaa={fold}>
                 <TitleWrap onClick={() => setFold(!fold)}>
-                    <div className={styles.routineBoxTitle}>커피</div>
+                    <div className={styles.routineBoxTitle}>{e.title}</div>
                     {fold ? (<BiEdit size="20"/>) : ''}
                 </TitleWrap>
                 {fold ? (
@@ -20,22 +39,23 @@ export default function Routine() {
                     <div className={styles.routineBoxContentWrap}>
                         <div className={styles.routineBoxContent}>
                             <div className={styles.routineMenu}>구분</div>
-                            <div className={styles.routineContent}>카운트</div>
+                            <div className={styles.routineContent}>{e.category}</div>
                         </div>
                         <div className={styles.routineBoxContent}>
                             <div className={styles.routineMenu}>반복</div>
-                            <div className={styles.routineContent}>평일</div>
+                            <div className={styles.routineContent}>{e.repeat}</div>
                         </div>
                         <div className={styles.routineBoxContent}>
                             <div className={styles.routineMenu}>활성</div>
-                            <div className={styles.routineContent}>2023.01.01</div>
+                            <div className={styles.routineContent}>{e.active}</div>
                         </div>
                         <hr className={styles.routineHr}/>
-                        <Tag>#음식/커피</Tag>
+                        <Tag>{e.tag}</Tag>
                     </div>
                 </div>
                 ) : ''}
             </RoutineBox>
+            ))}
         </div>
     )
 }
