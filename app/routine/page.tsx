@@ -15,8 +15,14 @@ interface MockData {
   }
   
 export default function Routine() {
-    const [fold, setFold] = useState(false)
+    const [fold, setFold] = useState<boolean>(false)
     const [data, setData] = useState<MockData[]>([])
+    const [toggleOnOff, setToggleOnOff] = useState<boolean>(false);
+
+    const handleToggle = (e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        setToggleOnOff(!toggleOnOff);
+    }
 
     useEffect(() => {
         axios('/data/mockData.json')
@@ -29,9 +35,13 @@ export default function Routine() {
     return (
         <div className={styles.main}>
             {data && data.map((e, i) => (
-                <RoutineBox key={i} aaa={fold}>
+                <RoutineBox key={i} foldValue={fold}>
                 <TitleWrap onClick={() => setFold(!fold)}>
-                    <div className={styles.routineBoxTitle}>{e.title}</div>
+                    <TitleAndToggle>{e.title}
+                        <Toggle onClick={handleToggle}>
+                            <ToggleCircle toggleOnOff={toggleOnOff}/>
+                        </Toggle>
+                    </TitleAndToggle>
                     {fold ? (<BiEdit size="20"/>) : ''}
                 </TitleWrap>
                 {fold ? (
@@ -63,7 +73,7 @@ export default function Routine() {
 const RoutineBox = styled.div`
     box-shadow: 2px 2px 2px 2px gray;
     width: 330px;
-    min-height: ${props => (props.aaa ? '200px' : '60px')}; // fold 값에 따라 동적으로 높이 설정
+    min-height: ${props => (props.foldValue ? '200px' : '60px')}; // fold 값에 따라 동적으로 높이 설정
     border-radius: 10px;
     padding: 20px;
     background-color: #F5FDEE;
@@ -80,4 +90,30 @@ const Tag = styled.div`
     color: #64705B;
     font-size: 12px;
     font-weight: bold;
+`
+
+const Toggle = styled.div`
+    width: 55px;
+    height: 30px;
+    background-color: #34C759;
+    border-radius: 20px;
+    display:flex;
+    align-items: center;
+    padding: 1px;
+`
+
+const ToggleCircle = styled.div`
+    width: 25px;
+    height: 26px;
+    border-radius: 50px;
+    background-color: white;
+    transform: ${(props) => props.toggleOnOff ? `translateX(27px)` : ''};
+    transition: 0.2s;
+`
+
+const TitleAndToggle = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
 `
