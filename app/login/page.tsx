@@ -2,8 +2,9 @@
 
 import axios from "axios";
 import styles from "./page.module.css";
-import GoogleLogin from "react-google-login";
+// import GoogleLogin from "react-google-login";
 import React, { useState, useEffect, useCallback } from "react";
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 
 export default function Home() {
   const clientIDValue =
@@ -21,15 +22,15 @@ export default function Home() {
   //   "scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
   // };
 
-  const googleLogin = useCallback((response) => {
-    const userInfo = {
-      profileImg: response.profileObj.imageUrl,
-      email: response.profileObj.email,
-      name: response.profileObj.name,
-    };
-    setUserInfo(userInfo);
-    setIsLogin(true);
-  }, []);
+  // const googleLogin = useCallback((response) => {
+  //   const userInfo = {
+  //     profileImg: response.profileObj.imageUrl,
+  //     email: response.profileObj.email,
+  //     name: response.profileObj.name,
+  //   };
+  //   setUserInfo(userInfo);
+  //   setIsLogin(true);
+  // }, []);
 
   return (
     <div className={styles.main}>
@@ -51,16 +52,18 @@ export default function Home() {
       {/* <button className={styles.loginButton} onClick={test}>
         로그인
       </button> */}
-      <GoogleLogin
-        clientId={clientIDValue}
-        buttonText="구글로 로그인"
-        // onSuccess={googleLogin}
-        onSuccess={() => {
-          window.location.href = "http://localhost:3000/routine";
-        }}
-        onFailure={(res) => console.log(res)}
-        cookiePolicy={"single_host_origin"}
-      />
+      <GoogleOAuthProvider clientId={clientIDValue}>
+        <GoogleLogin
+          onSuccess={res => {
+            console.log(res);
+            // window.location.href='/routine'
+          }}
+          onError={() => {
+            console.log('aaa')
+          }}
+          useOneTap
+        />
+      </GoogleOAuthProvider>
       <div className={styles.signupForget}>
         <div className={styles.signup}>회원가입</div>
         <div className={styles.forget}>계정 정보를 잊으셨습니까?</div>
