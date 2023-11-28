@@ -2,35 +2,12 @@
 
 import axios from "axios";
 import styles from "./page.module.css";
-// import GoogleLogin from "react-google-login";
 import React, { useState, useEffect, useCallback } from "react";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 
 export default function Home() {
-  const clientIDValue =
-    "383755203832-asb9rbs3f5v1eenk4al5cjlud9ieqim5.apps.googleusercontent.com";
-
   const [isLogin, setIsLogin] = useState(false);
   const [userInfo, setUserInfo] = useState({});
-
-  // const test = () => {
-  //   console.log(process.env.REACT_APP_GOOGLE_CLIENT_ID);
-  //   window.location.href ="https://accounts.google.com/o/oauth2/auth?" +
-  //   "client_id={클라이언트 ID}&"+
-  //   "redirect_uri={리디렉션 URI}&"+
-  //   "response_type=token&"+
-  //   "scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
-  // };
-
-  // const googleLogin = useCallback((response) => {
-  //   const userInfo = {
-  //     profileImg: response.profileObj.imageUrl,
-  //     email: response.profileObj.email,
-  //     name: response.profileObj.name,
-  //   };
-  //   setUserInfo(userInfo);
-  //   setIsLogin(true);
-  // }, []);
 
   return (
     <div className={styles.main}>
@@ -52,7 +29,7 @@ export default function Home() {
       {/* <button className={styles.loginButton} onClick={test}>
         로그인
       </button> */}
-      <GoogleOAuthProvider clientId={clientIDValue}>
+      <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_KEY}>
         <GoogleLogin
           onSuccess={res => {
             console.log(res);
