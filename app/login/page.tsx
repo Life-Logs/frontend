@@ -33,7 +33,7 @@ export default function Home() {
         <GoogleLogin
           onSuccess={res => {
             console.log(res);
-            // window.location.href='/routine'
+            window.location.href='/routine'
           }}
           onError={() => {
             console.log('aaa')

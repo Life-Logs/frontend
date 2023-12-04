@@ -66,6 +66,9 @@ export default function Routine() {
                 ) : ''}
             </RoutineBox>
             ))}
+            <button onClick={() => {
+                window.location.href='/routineAdd'
+            }}>+</button>
         </div>
     )
 }
