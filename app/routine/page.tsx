@@ -15,19 +15,25 @@ interface MockData {
   }
   
 export default function Routine() {
-    const [fold, setFold] = useState<boolean>(false)
+    const [fold, setFold] = useState<boolean[]>([])
     const [data, setData] = useState<MockData[]>([])
-    const [toggleOnOff, setToggleOnOff] = useState<boolean>(false);
+    const [toggleOnOff, setToggleOnOff] = useState<boolean>([]);
 
-    const handleToggle = (e: React.MouseEvent<HTMLDivElement>) => {
+    const handleToggle = (e: React.MouseEvent<HTMLDivElement>, i: number) => {
         e.stopPropagation();
-        setToggleOnOff(!toggleOnOff);
+        const toggleValue = [...toggleOnOff];
+        toggleValue[i] = !toggleValue[i];
+        setToggleOnOff(toggleValue);
     }
 
     useEffect(() => {
         axios('/data/mockData.json')
         .then((response) => {
             const responseValue = response.data.mockData
+            const toggleArr = Array(responseValue.length).fill(false);
+
+            setToggleOnOff(toggleArr)
+            setFold(toggleArr)
             setData(responseValue)
         })
     }, [])
@@ -35,16 +41,26 @@ export default function Routine() {
     return (
         <div className={styles.main}>
             {data && data.map((e, i) => (
-                <RoutineBox key={i} foldValue={fold}>
-                <TitleWrap onClick={() => setFold(!fold)}>
-                    <TitleAndToggle>{e.title}
-                        <Toggle onClick={handleToggle}>
-                            <ToggleCircle toggleOnOff={toggleOnOff}/>
-                        </Toggle>
+                <RoutineBox routineBoxColor={toggleOnOff[i]} key={i} foldValue={fold[i]}>
+                <TitleWrap onClick={() => {
+                    const newFold = [...fold]
+                    newFold[i] = !newFold[i]
+                    setFold(newFold)
+                }}>
+                    <TitleAndToggle >{e.title}
+                    {!fold[i] ?
+                    (
+                        <>
+                            <Tags>{e.tag}</Tags>
+                                <Toggle toggleColor={toggleOnOff[i]} onClick={(e) => handleToggle(e, i)}>
+                                    <ToggleCircle  toggleOnOff={toggleOnOff[i]}/>
+                                </Toggle>
+                        </>
+                    ) : ''}
                     </TitleAndToggle>
-                    {fold ? (<BiEdit size="20"/>) : ''}
+                    {fold[i] ? (<BiEdit size="20"/>) : ''}
                 </TitleWrap>
-                {fold ? (
+                {fold[i] ? (
                 <div className={styles.routineBoxFold}>
                     <div className={styles.routineBoxContentWrap}>
                         <div className={styles.routineBoxContent}>
@@ -66,9 +82,11 @@ export default function Routine() {
                 ) : ''}
             </RoutineBox>
             ))}
-            <button onClick={() => {
-                window.location.href='/routineAdd'
-            }}>+</button>
+            <AddButtonWrapper>
+                <AddButton onClick={() => {
+                    window.location.href='/routineAdd'
+                }}>+</AddButton>
+            </AddButtonWrapper>
         </div>
     )
 }
@@ -79,9 +97,11 @@ const RoutineBox = styled.div`
     min-height: ${props => (props.foldValue ? '200px' : '60px')}; // fold 값에 따라 동적으로 높이 설정
     border-radius: 10px;
     padding: 20px;
-    background-color: #F5FDEE;
+    background-color: ${(props) => props.routineBoxColor ? '#F5FDEE' : '#C5D0BC'};
+    /* background-color: #F5FDEE; */
     user-select: none;
     transition: 0.5s;
+    border: none;
 `
 const TitleWrap = styled.div`
     display: flex;
@@ -98,7 +118,7 @@ const Tag = styled.div`
 const Toggle = styled.div`
     width: 55px;
     height: 30px;
-    background-color: #34C759;
+    background-color: ${(props) => props.toggleColor ? '#34C759' : '#64705B'};
     border-radius: 20px;
     display:flex;
     align-items: center;
@@ -118,5 +138,28 @@ const TitleAndToggle = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
+    width: 100%;   
+`
+
+const AddButtonWrapper = styled.div`
+    display:flex;
+    justify-content: end;
+    width: 330px;
+    /* border: 1px solid red; */
+`
+
+const AddButton = styled.button`
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    border: none;
+    font-size: 32px;
+    font-weight: lighter;
+    background-color: black;
+    color: white;
+`
+
+const Tags = styled.p`
+    color: #64705B;
+    font-size: 12px;
 `
