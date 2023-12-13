@@ -1,29 +1,29 @@
 {
     "mockData": [
         {
-            "title": "커피",
-            "category": "카운트",
+            "name": "커피",
+            "type": "카운트",
             "repeat": "평일",
             "active": "2023.01.01",
             "tag": "#음식/커피"
         },
         {
-            "title": "무산소",
-            "category": "카운트22",
+            "name": "무산소",
+            "type": "카운트22",
             "repeat": "평일22",
             "active": "2023.02.02",
             "tag": "#건강 #취미"
         },
         {
-            "title": "유산소",
-            "category": "체크박스",
+            "name": "유산소",
+            "type": "체크박스",
             "repeat": "매주 월수금",
             "active": "2021.09.29",
             "tag": "#건강 #취미"
         },
         {
-            "title": "컴공공부",
-            "category": "퍼센트",
+            "name": "컴공공부",
+            "type": "퍼센트",
             "repeat": "매일",
             "active": "2021.09.29",
             "tag": "#취미"

@@ -7,10 +7,10 @@ import { BiEdit } from 'react-icons/bi';
 import axios from 'axios';
 
 interface MockData {
-    title: string;
-    category: string;
+    name: string;
+    type: string;
     repeat: string;
-    active: string;
+    activedAt: string;
     tag: string;
   }
   
@@ -27,14 +27,31 @@ export default function Routine() {
     }
 
     useEffect(() => {
-        axios('/data/mockData.json')
+        axios({
+            method: 'get',
+            url: 'https://lifelog.devtkim.com/routine',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
         .then((response) => {
-            const responseValue = response.data.mockData
-            const toggleArr = Array(responseValue.length).fill(false);
+            console.log(response)
+            const responseValue = response.data
+            const toggleArr = Array(responseValue.length).fill(
+                responseValue.map((e) => {
+                        return e.isActived ? true : false
+                    })
+                );
 
-            setToggleOnOff(toggleArr)
-            setFold(toggleArr)
+            console.log(responseValue)
+
+            setToggleOnOff(responseValue)
+            // setFold(toggleArr)
+            setFold(Array(responseValue.length).fill(false))
             setData(responseValue)
+        })
+        .catch((error) => {
+            console.log(error)
         })
     }, [])
 
@@ -47,11 +64,13 @@ export default function Routine() {
                     newFold[i] = !newFold[i]
                     setFold(newFold)
                 }}>
-                    <TitleAndToggle >{e.title}
+                    <TitleAndToggle >{e.name}
                     {!fold[i] ?
                     (
                         <>
-                            <Tags>{e.tag}</Tags>
+                            <Tags>{(e.routineTags).map((el) => {
+                                return '#'+el+' '
+                            })}</Tags>
                                 <Toggle toggleColor={toggleOnOff[i]} onClick={(e) => handleToggle(e, i)}>
                                     <ToggleCircle  toggleOnOff={toggleOnOff[i]}/>
                                 </Toggle>
@@ -65,7 +84,7 @@ export default function Routine() {
                     <div className={styles.routineBoxContentWrap}>
                         <div className={styles.routineBoxContent}>
                             <div className={styles.routineMenu}>구분</div>
-                            <div className={styles.routineContent}>{e.category}</div>
+                            <div className={styles.routineContent}>{e.type}</div>
                         </div>
                         <div className={styles.routineBoxContent}>
                             <div className={styles.routineMenu}>반복</div>
@@ -73,7 +92,7 @@ export default function Routine() {
                         </div>
                         <div className={styles.routineBoxContent}>
                             <div className={styles.routineMenu}>활성</div>
-                            <div className={styles.routineContent}>{e.active}</div>
+                            <div className={styles.routineContent}>{e.activedAt}</div>
                         </div>
                         <hr className={styles.routineHr}/>
                         <Tag>{e.tag}</Tag>
@@ -157,6 +176,7 @@ const AddButton = styled.button`
     font-weight: lighter;
     background-color: black;
     color: white;
+    cursor: pointer;
 `
 
 const Tags = styled.p`

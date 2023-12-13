@@ -64,13 +64,16 @@ export default function routineAdd() {
 
     return (
     <Body>
-        <List>이름<InputSpace onChange={(e) => handleNameChange(e)}/></List>
+        <Title>루틴 추가</Title>
+        <Category>
+            <List>이름<InputSpace placeholder="15자 이하"onChange={(e) => handleNameChange(e)}/></List>
+        </Category>
         <List>구분<InputSpace onChange={(e) => handleTypeChange(e)}/></List>
         {/* <List>목표</List> */}
         <List>태그<InputSpace
             ref={tagRef}
             onKeyDown={(e) => handleTagChange(e)}/>
-        </List>
+        </List> 
         <TagList>태그목록 :</TagList>
         <List>날짜및시간</List>
         <ConfirmAndCancle>
@@ -85,10 +88,32 @@ export default function routineAdd() {
     </Body>)
 }
 
-const Body = styled.div``
-const List = styled.div``
+const Body = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 100vh;
+    background-color: white;
+`
+const List = styled.div`
+    display: flex;
+    flex-direction:column;
+    width: fit-content;
+    height: fit-content;
+`
 const TagList = styled.div``
-const InputSpace = styled.input``
+const InputSpace = styled.input`
+    border: none;
+    border-bottom: 1px solid black;
+`
 const ConfirmAndCancle = styled.div``
 const Confirm = styled.button``
 const Cancel = styled.button``
+const Category = styled.div`
+    display: flex;
+    width: fit-content;
+    height: fit-content;
+`
+
+const Title = styled.div``
