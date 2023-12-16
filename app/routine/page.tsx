@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { BiEdit } from 'react-icons/bi';
 import axios from 'axios';
+import RoutineAdd from '../routineAdd/page';
 
 interface MockData {
     name: string;
@@ -17,7 +18,8 @@ interface MockData {
 export default function Routine() {
     const [fold, setFold] = useState<boolean[]>([])
     const [data, setData] = useState<MockData[]>([])
-    const [toggleOnOff, setToggleOnOff] = useState<boolean>([]);
+    const [toggleOnOff, setToggleOnOff] = useState<boolean[]>([]);
+    const [modal, setModal] = useState<boolean>(false)
 
     const handleToggle = (e: React.MouseEvent<HTMLDivElement>, i: number) => {
         e.stopPropagation();
@@ -56,63 +58,90 @@ export default function Routine() {
     }, [])
 
     return (
-        <div className={styles.main}>
-            {data && data.map((e, i) => (
-                <RoutineBox routineBoxColor={toggleOnOff[i]} key={i} foldValue={fold[i]}>
-                <TitleWrap onClick={() => {
-                    const newFold = [...fold]
-                    newFold[i] = !newFold[i]
-                    setFold(newFold)
-                }}>
-                    <TitleAndToggle >{e.name}
-                    {!fold[i] ?
-                    (
-                        <>
-                            <Tags>{(e.routineTags).map((el) => {
-                                return '#'+el+' '
-                            })}</Tags>
-                                <Toggle toggleColor={toggleOnOff[i]} onClick={(e) => handleToggle(e, i)}>
-                                    <ToggleCircle  toggleOnOff={toggleOnOff[i]}/>
-                                </Toggle>
-                        </>
-                    ) : ''}
-                    </TitleAndToggle>
-                    {fold[i] ? (<BiEdit size="20"/>) : ''}
-                </TitleWrap>
-                {fold[i] ? (
-                <div className={styles.routineBoxFold}>
-                    <div className={styles.routineBoxContentWrap}>
-                        <div className={styles.routineBoxContent}>
-                            <div className={styles.routineMenu}>구분</div>
-                            <div className={styles.routineContent}>{e.type}</div>
+        <Body>
+            <WebSize>
+                <RoutineName>루틴</RoutineName>
+                {modal && (
+                    <RoutineAdd setModal={setModal}/>
+                )}
+                {data && data.map((e, i) => (
+                    <RoutineBox routineBoxColor={toggleOnOff[i]} key={i} foldValue={fold[i]}>
+                    <TitleWrap onClick={() => {
+                        const newFold = [...fold]
+                        newFold[i] = !newFold[i]
+                        setFold(newFold)
+                    }}>
+                        <TitleAndToggle >{e.name}
+                        {!fold[i] ?
+                        (
+                            <>
+                                <Tags>{(e.routineTags).map((el) => {
+                                    return '#'+el+' '
+                                })}</Tags>
+                                    <Toggle toggleColor={toggleOnOff[i]} onClick={(e) => handleToggle(e, i)}>
+                                        <ToggleCircle  toggleOnOff={toggleOnOff[i]}/>
+                                    </Toggle>
+                            </>
+                        ) : ''}
+                        </TitleAndToggle>
+                        {fold[i] ? (<BiEdit size="20"/>) : ''}
+                    </TitleWrap>
+                    {fold[i] ? (
+                    <div className={styles.routineBoxFold}>
+                        <div className={styles.routineBoxContentWrap}>
+                            <div className={styles.routineBoxContent}>
+                                <div className={styles.routineMenu}>구분</div>
+                                <div className={styles.routineContent}>{e.type}</div>
+                            </div>
+                            <div className={styles.routineBoxContent}>
+                                <div className={styles.routineMenu}>반복</div>
+                                <div className={styles.routineContent}>{e.repeat}</div>
+                            </div>
+                            <div className={styles.routineBoxContent}>
+                                <div className={styles.routineMenu}>활성</div>
+                                <div className={styles.routineContent}>{e.activedAt}</div>
+                            </div>
+                            <hr className={styles.routineHr}/>
+                            <Tag>{e.tag}</Tag>
                         </div>
-                        <div className={styles.routineBoxContent}>
-                            <div className={styles.routineMenu}>반복</div>
-                            <div className={styles.routineContent}>{e.repeat}</div>
-                        </div>
-                        <div className={styles.routineBoxContent}>
-                            <div className={styles.routineMenu}>활성</div>
-                            <div className={styles.routineContent}>{e.activedAt}</div>
-                        </div>
-                        <hr className={styles.routineHr}/>
-                        <Tag>{e.tag}</Tag>
                     </div>
-                </div>
-                ) : ''}
-            </RoutineBox>
-            ))}
-            <AddButtonWrapper>
-                <AddButton onClick={() => {
-                    window.location.href='/routineAdd'
-                }}>+</AddButton>
-            </AddButtonWrapper>
-        </div>
+                    ) : ''}
+                </RoutineBox>
+                ))}
+                <AddButtonWrapper>
+                    <AddButton onClick={() => {
+                        setModal(!modal)
+                    }}>+</AddButton>
+                </AddButtonWrapper>
+            </WebSize>
+        </Body>
     )
 }
 
+const Body = styled.div`
+    display: flex;
+    justify-content: center;
+    background-color: black;
+`
+
+const WebSize = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    position:relative;
+    min-height: 100vh;
+    background-color: #E2F2D5;
+    width: 390px;    
+`
+
+const RoutineName = styled.div`
+    margin-top: 50px;
+`
+
 const RoutineBox = styled.div`
     box-shadow: 2px 2px 2px 2px gray;
-    width: 330px;
+    width: 338px;
     min-height: ${props => (props.foldValue ? '200px' : '60px')}; // fold 값에 따라 동적으로 높이 설정
     border-radius: 10px;
     padding: 20px;
@@ -163,7 +192,8 @@ const TitleAndToggle = styled.div`
 const AddButtonWrapper = styled.div`
     display:flex;
     justify-content: end;
-    width: 330px;
+    width: 338px;
+    margin-bottom: 20px;
     /* border: 1px solid red; */
 `
 
