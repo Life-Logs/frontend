@@ -37,15 +37,12 @@ export default function Routine() {
             },
         })
         .then((response) => {
-            console.log(response)
             const responseValue = response.data
             const toggleArr = Array(responseValue.length).fill(
                 responseValue.map((e) => {
                         return e.isActived ? true : false
                     })
                 );
-
-            console.log(responseValue)
 
             setToggleOnOff(responseValue)
             // setFold(toggleArr)
