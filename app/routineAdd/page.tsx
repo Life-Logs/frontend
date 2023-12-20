@@ -11,11 +11,13 @@ interface RoutineAddProps {
 export default function RoutineAdd({ setModal }:RoutineAddProps) {
 
     const [name, setName] = useState('')
-    const [type, setType] = useState('')
+    const [type, setType] = useState('count')
     const [tag, setTag] = useState<boolean[]>([])
     const [selectWeek, setSelectWeek] = useState<string>('매일')
     // const [selectWeek, setSelectWeek] = useState<boolean[]>([])
     const [view, setView] = useState<boolean>(false)
+    const [goalView, setGoalView] = useState<boolean>(false);
+    const [sortationView, setSortationView] = useState<boolean>(false)
     const [choice, setChoice] = useState<boolean[]>([
         true,
         true,
@@ -25,9 +27,11 @@ export default function RoutineAdd({ setModal }:RoutineAddProps) {
         true,
         true,
     ])
+    const [time, setTime] = useState<boolean>(false)
 
-    const weekCycle = ['매일', '평일', '주말']
+    const weekArr = ['매일', '평일', '주말']
     const weekDay = ['월', '화', '수', '목', '금', '토', '일']
+    const sortationArr = ['count', 'percent', 'checkbox']
 
     const tagRef = useRef();
 
@@ -93,7 +97,7 @@ export default function RoutineAdd({ setModal }:RoutineAddProps) {
 
     async function postRoutine (data) {
         try {
-            const response = await axios.post('http://192.168.219.103:3000/routine', data, {
+            const response = await axios.post('https://lifelog.devtkim.com/routine', data, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -114,13 +118,35 @@ export default function RoutineAdd({ setModal }:RoutineAddProps) {
             <InputSpace placeholder="15자 이하" onChange={(e) => handleNameChange(e)}/>
         </List>
         <List2>
-            <ListTitle>구분</ListTitle>
+            <SortationWrapper>
+                <SortationTitleWrapper>
+                    <ListTitle>구분</ListTitle>
+                    <CheckboxWrapper onClick={() => setGoalView(!goalView)}>
+                        <CheckboxInput type="checkbox"/> 
+                        <CheckboxText>목표설정</CheckboxText>
+                    </CheckboxWrapper>
+                </SortationTitleWrapper>
+                <SortationChoice onClick={() => setSortationView(!sortationView)}>{type}<LowIcon>▼</LowIcon></SortationChoice>
+                {sortationView ? (
+                    <SortationList>
+                        {sortationArr.map((e , i) => {
+                            return (
+                                <Sortation key={i}>
+                                    {e}
+                                </Sortation>
+                            )
+                        })}
+                        
+                    </SortationList>
+                ) : ''}
             {/* <InputSpace onChange={(e) => handleTypeChange(e)}/> */}
+            </SortationWrapper>
         </List2>
+        {goalView ?
         <List2>
             <ListTitle2>목표</ListTitle2>
                 <InputSpace placeholder="숫자만 입력 가능합니다 (0 ~ 9999)" onChange={(e) => handleTypeChange(e)}/>
-        </List2>
+        </List2> : ''}        
         <List2>
             <ListTitle2>태그</ListTitle2>
             <InputSpace
@@ -143,7 +169,7 @@ export default function RoutineAdd({ setModal }:RoutineAddProps) {
                 {view ?
                 (
                 <WeekList>
-                    {weekCycle.map((e, i) => {
+                    {weekArr.map((e, i) => {
                         return (
                         <WeekKind
                             key={i}
@@ -171,8 +197,14 @@ export default function RoutineAdd({ setModal }:RoutineAddProps) {
                             > {e}</Day>
                     })}
                 </Week>
-                <Time>+ 시간</Time>
+                <Time onClick={() => setTime(!time)}>+ 시간</Time>
             </WeekDaySelectWrapper>
+            {time ? (
+                <TimeChoiceWrapper>
+                    <TimeChoice>오전 9시</TimeChoice>
+                    <TimeChoice>오후 6시</TimeChoice>
+                </TimeChoiceWrapper>
+            ) : ''}            
         </SelectDateWrapper>
         <ConfirmAndCancle>
             <Cancel onClick={() => setModal(false)}>취소</Cancel>
@@ -299,6 +331,7 @@ const DaySelectWrapper = styled.div`
 `
 const DaySelect = styled.div`
     display: flex;
+    justify-content: space-between;
     align-items: center;
     width: 170px;
     border-radius: 15px;
@@ -308,6 +341,7 @@ const DaySelect = styled.div`
 `
 
 const CheckBoxAndText = styled.div`
+    visibility: hidden;
     display: flex;
     align-items: center;
     user-select:none;
@@ -336,8 +370,8 @@ const WeekKind = styled.div`
 `
 
 const LowIcon = styled.span`
-    position: absolute;
-    margin-left: 135px;
+    /* position: absolute;
+    margin-left: 135px; */
     font-size: 12px;
 `
 
@@ -356,7 +390,7 @@ const Week = styled.div`
 
 const Day = styled.span`
     border: ${(props) => props.choice ? 'black' : 'F6F6F6'} solid 1px;
-    padding: 2px;
+    padding: 2px 4px;
     border-radius: 20px;
     user-select: none;
     cursor: pointer;
@@ -371,3 +405,54 @@ const Time = styled.button`
     padding: 5px;
     cursor: pointer;
 `
+
+const TimeChoice = styled.div`
+    width: 100%;
+    background-color: #F6F6F6;
+    border-bottom: 1px solid gray;
+    padding-bottom: 5px;
+    margin : 10px 0;
+`
+
+const TimeChoiceWrapper = styled.div`
+    background-color: #F6F6F6;
+    padding: 10px 15px;
+`
+
+const SortationChoice = styled.div`
+    border: 1px solid black;
+    padding: 8px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+`
+const SortationWrapper = styled.div`
+    width: 100%;
+`
+
+const SortationTitleWrapper = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+`
+
+const CheckboxWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    padding-bottom: 18px;
+`
+
+const CheckboxText = styled.div`
+    margin-left: 5px;
+`
+const CheckboxInput = styled.input`
+    cursor: pointer;
+`
+
+const SortationList = styled.div``
+const Sortation = styled.div``

@@ -23,10 +23,40 @@ export default function Routine() {
 
     const handleToggle = (e: React.MouseEvent<HTMLDivElement>, i: number) => {
         e.stopPropagation();
-        const toggleValue = [...toggleOnOff];
-        toggleValue[i] = !toggleValue[i];
-        setToggleOnOff(toggleValue);
+        const dataValue = [...data];
+        // const toggleOnOffValue = [...toggleOnOff]
+        dataValue[i].isActived = !(dataValue[i].isActived);
+        // !toggleOnOffValue[i]
+        axios.patch(`https://lifelog.devtkim.com/routine/${dataValue[i].id}/toggle-activation`, {
+            "isActived": dataValue[i].isActived
+        })
+        .then((response) => {
+            console.log(response)
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+        // axios({
+        //     method: 'patch',
+        //     url:`/routine/${dataValue[i].id}/toggle-activation`,
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+
+        // })
+        console.log(dataValue)
+        setData(dataValue)
+        // setToggleOnOff(dataValue);
     }
+
+    useEffect(() => {
+
+
+    }, [data])
+
+    // useEffect(() => {
+
+    // }, [toggleOnOff])
 
     useEffect(() => {
         axios({
@@ -38,13 +68,17 @@ export default function Routine() {
         })
         .then((response) => {
             const responseValue = response.data
-            const toggleArr = Array(responseValue.length).fill(
-                responseValue.map((e) => {
+            const toggleArr = []
+            toggleArr.push(responseValue.map((e) => {
                         return e.isActived ? true : false
-                    })
-                );
+            }))
+            // const toggleArr = Array(responseValue.length).fill(
+            //     responseValue.map((e) => {
+            //             return e.isActived ? true : false
+            //         })
+            //     );
 
-            setToggleOnOff(responseValue)
+            setToggleOnOff(toggleArr)
             // setFold(toggleArr)
             setFold(Array(responseValue.length).fill(false))
             setData(responseValue)
@@ -62,7 +96,7 @@ export default function Routine() {
                     <RoutineAdd setModal={setModal}/>
                 )}
                 {data && data.map((e, i) => (
-                    <RoutineBox routineBoxColor={toggleOnOff[i]} key={i} foldValue={fold[i]}>
+                    <RoutineBox routineBoxColor={data[i].isActived} key={i} foldValue={fold[i]}>
                     <TitleWrap onClick={() => {
                         const newFold = [...fold]
                         newFold[i] = !newFold[i]
@@ -75,8 +109,8 @@ export default function Routine() {
                                 <Tags>{(e.routineTags).map((el) => {
                                     return '#'+el+' '
                                 })}</Tags>
-                                    <Toggle toggleColor={toggleOnOff[i]} onClick={(e) => handleToggle(e, i)}>
-                                        <ToggleCircle  toggleOnOff={toggleOnOff[i]}/>
+                                    <Toggle toggleColor={data[i].isActived} onClick={(e) => handleToggle(e, i)}>
+                                        <ToggleCircle  toggleOnOff={data[i].isActived}/>
                                     </Toggle>
                             </>
                         ) : ''}
