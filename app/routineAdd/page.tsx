@@ -28,6 +28,7 @@ export default function RoutineAdd({ setModal }: RoutineAddProps) {
     true,
   ]);
   const [time, setTime] = useState<boolean>(false);
+  const [addTimeCount, setAddTimeCount] = useState<number>(0);
 
   const weekArr = ['매일', '평일', '주말'];
   const weekDay = ['월', '화', '수', '목', '금', '토', '일'];
@@ -130,72 +131,73 @@ export default function RoutineAdd({ setModal }: RoutineAddProps) {
     <Body>
       <Title>루틴 추가</Title>
       <InputContents>
-        <List>
-          <ListTitle>이름</ListTitle>
-          <InputSpace
-            placeholder='15자 이하'
-            onChange={(e) => handleNameChange(e)}
-          />
-        </List>
-        <List2>
-          <SortationWrapper>
-            <SortationTitleWrapper>
-              <ListTitle>구분</ListTitle>
-              <CheckboxWrapper onClick={() => setGoalView(!goalView)}>
-                <CheckboxInput type='checkbox' />
-                <CheckboxText>목표설정</CheckboxText>
-              </CheckboxWrapper>
-            </SortationTitleWrapper>
-            <SortationChoice onClick={() => setSortationView(!sortationView)}>
-              {type}
-              <LowIcon>▼</LowIcon>
-            </SortationChoice>
-            {sortationView ? (
-              <SortationList>
-                {sortationArr.map((e, i) => {
-                  return <Sortation key={i}>{e}</Sortation>;
-                })}
-              </SortationList>
-            ) : (
-              ''
-            )}
-            {/* <InputSpace onChange={(e) => handleTypeChange(e)}/> */}
-          </SortationWrapper>
-        </List2>
-        {goalView ? (
-          <List2>
-            <ListTitle2>목표</ListTitle2>
+        <InputContentsExceptSaveButton>
+          <List>
+            <ListTitle>이름</ListTitle>
             <InputSpace
-              placeholder='숫자만 입력 가능합니다 (0 ~ 9999)'
-              onChange={(e) => handleTypeChange(e)}
+              placeholder='15자 이하'
+              onChange={(e) => handleNameChange(e)}
+            />
+          </List>
+          <List2>
+            <SortationWrapper>
+              <SortationTitleWrapper>
+                <ListTitle>구분</ListTitle>
+                <CheckboxWrapper onClick={() => setGoalView(!goalView)}>
+                  <CheckboxInput type='checkbox' />
+                  <CheckboxText>목표설정</CheckboxText>
+                </CheckboxWrapper>
+              </SortationTitleWrapper>
+              <SortationChoice onClick={() => setSortationView(!sortationView)}>
+                {type}
+                <LowIcon>▼</LowIcon>
+              </SortationChoice>
+              {sortationView ? (
+                <SortationList>
+                  {sortationArr.map((e, i) => {
+                    return <Sortation key={i}>{e}</Sortation>;
+                  })}
+                </SortationList>
+              ) : (
+                ''
+              )}
+              {/* <InputSpace onChange={(e) => handleTypeChange(e)}/> */}
+            </SortationWrapper>
+          </List2>
+          {goalView ? (
+            <List2>
+              <ListTitle2>목표</ListTitle2>
+              <InputSpace
+                placeholder='숫자만 입력 가능합니다 (0 ~ 9999)'
+                onChange={(e) => handleTypeChange(e)}
+              />
+            </List2>
+          ) : (
+            ''
+          )}
+          <List2>
+            <ListTitle2>태그</ListTitle2>
+            <InputSpace
+              placeholder='비워두면 루틴 이름으로 설정됩니다'
+              ref={tagRef}
+              onKeyDown={(e) => handleTagChange(e)}
             />
           </List2>
-        ) : (
-          ''
-        )}
-        <List2>
-          <ListTitle2>태그</ListTitle2>
-          <InputSpace
-            placeholder='비워두면 루틴 이름으로 설정됩니다'
-            ref={tagRef}
-            onKeyDown={(e) => handleTagChange(e)}
-          />
-        </List2>
-        {/* <TagList>태그목록 :</TagList> */}
+          {/* <TagList>태그목록 :</TagList> */}
 
-        <SelectDateWrapper>
-          <List>
-            <ListTitle>날짜 및 시간</ListTitle>
-          </List>
-          <WhenStartAndDateWrapper>
-            <WhenStart>언제부터 시작할까요?</WhenStart>
-            <DateSelect>2023.02.10</DateSelect>
-          </WhenStartAndDateWrapper>
-          <WhenStartAndDateWrapper>
-            <WhenStart>언제까지 할까요?</WhenStart>
-            <DateSelect>2023.03.10</DateSelect>
-          </WhenStartAndDateWrapper>
-          {/* <DaySelectAndWeekDaySelect
+          <SelectDateWrapper>
+            <List>
+              <ListTitle>날짜 및 시간</ListTitle>
+            </List>
+            <WhenStartAndDateWrapper>
+              <WhenStart>언제부터 시작할까요?</WhenStart>
+              <DateSelect>2023.02.10</DateSelect>
+            </WhenStartAndDateWrapper>
+            <WhenStartAndDateWrapper>
+              <WhenStart>언제까지 할까요?</WhenStart>
+              <DateSelect>2023.03.10</DateSelect>
+            </WhenStartAndDateWrapper>
+            {/* <DaySelectAndWeekDaySelect
                 view={view}
                 setView={setView}
                 selectWeek={selectWeek}
@@ -205,63 +207,80 @@ export default function RoutineAdd({ setModal }: RoutineAddProps) {
                 time={time}
                 setTime={setTime}
             /> */}
-          <DaySelectAndWeekDaySelectWrapper>
-            <DaySelectWrapper>
-              <DaySelect onClick={() => setView(!view)}>
-                {selectWeek}
-                <LowIcon>▼</LowIcon>
-              </DaySelect>
-              {view ? (
-                <WeekList>
-                  {weekArr.map((e, i) => {
+            <DaySelectAndWeekDaySelectWrapper>
+              <DaySelectWrapper>
+                <DaySelect onClick={() => setView(!view)}>
+                  {selectWeek}
+                  <LowIcon>▼</LowIcon>
+                </DaySelect>
+                {view ? (
+                  <WeekList>
+                    {weekArr.map((e, i) => {
+                      return (
+                        <WeekKind
+                          key={i}
+                          onClick={() => {
+                            handleSelectDay(e, null);
+                            setView(!view);
+                          }}
+                        >
+                          {e}
+                        </WeekKind>
+                      );
+                    })}
+                  </WeekList>
+                ) : null}
+                <CheckBoxAndText>
+                  <CheckHoliday type='checkbox' />
+                  <HolidayText>공휴일 제외</HolidayText>
+                </CheckBoxAndText>
+              </DaySelectWrapper>
+              <WeekDaySelectWrapper>
+                <Week>
+                  {weekDay.map((e, i) => {
                     return (
-                      <WeekKind
+                      <Day
                         key={i}
-                        onClick={() => {
-                          handleSelectDay(e, null);
-                          setView(!view);
-                        }}
+                        choice={choice[i]}
+                        onClick={() => handleSelectDay('매주', i)}
                       >
+                        {' '}
                         {e}
-                      </WeekKind>
+                      </Day>
                     );
                   })}
-                </WeekList>
-              ) : null}
-              <CheckBoxAndText>
-                <CheckHoliday type='checkbox' />
-                <HolidayText>공휴일 제외</HolidayText>
-              </CheckBoxAndText>
-            </DaySelectWrapper>
-            <WeekDaySelectWrapper>
-              <Week>
-                {weekDay.map((e, i) => {
-                  return (
-                    <Day
-                      key={i}
-                      choice={choice[i]}
-                      onClick={() => handleSelectDay('매주', i)}
-                    >
-                      {' '}
-                      {e}
-                    </Day>
-                  );
-                })}
-              </Week>
-              <Time onClick={() => setTime(!time)}>+ 시간</Time>
-            </WeekDaySelectWrapper>
-          </DaySelectAndWeekDaySelectWrapper>
-          <DateAndTimeAdd>+ 날짜 및 시간 추가</DateAndTimeAdd>
-          {/* <DaySelectAndWeekDaySelect/> */}
-          {time ? (
-            <TimeChoiceWrapper>
-              <TimeChoice>오전 9시</TimeChoice>
-              <TimeChoice>오후 6시</TimeChoice>
-            </TimeChoiceWrapper>
-          ) : (
-            ''
-          )}
-        </SelectDateWrapper>
+                </Week>
+                <Time onClick={() => setTime(!time)}>+ 시간</Time>
+              </WeekDaySelectWrapper>
+            </DaySelectAndWeekDaySelectWrapper>
+
+            {/* <DaySelectAndWeekDaySelect/> */}
+            {time ? (
+              <TimeChoiceWrapper>
+                <TimeChoice>오전 9시</TimeChoice>
+                <TimeChoice>오후 6시</TimeChoice>
+              </TimeChoiceWrapper>
+            ) : (
+              ''
+            )}
+          </SelectDateWrapper>
+          {Array.from({ length: addTimeCount }, (_, i) => (
+            <DaySelectAndWeekDaySelect
+              key={i}
+              view={view}
+              setView={setView}
+              selectWeek={selectWeek}
+              setSelectWeek={setSelectWeek}
+              choice={choice}
+              setChoice={setChoice}
+              time={time}
+              setTime={setTime}
+            />
+          ))}
+          <DateAndTimeAdd onClick={() => setAddTimeCount(addTimeCount + 1)}>
+            + 날짜 및 시간 추가
+          </DateAndTimeAdd>
+        </InputContentsExceptSaveButton>
         <ConfirmAndCancle>
           <Cancel onClick={() => setModal(false)}>취소</Cancel>
           <Confirm
@@ -301,17 +320,24 @@ const InputContents = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    width: 0;
+  }
 `;
+
 const List = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
   height: fit-content;
+  margin: 20px 0;
 `;
 const List2 = styled.div`
   display: flex;
   width: 100%;
   height: fit-content;
+  margin: 20px 0;
 `;
 const ListTitle = styled.p`
   font-size: 16px;
@@ -370,6 +396,7 @@ const Title = styled.div`
 const SelectDateWrapper = styled.div`
   width: 100%;
 `;
+
 const WhenStartAndDateWrapper = styled.div`
   display: flex;
   justify-content: space-between;
@@ -495,6 +522,7 @@ const SortationChoice = styled.div`
   cursor: pointer;
   user-select: none;
 `;
+
 const SortationWrapper = styled.div`
   width: 100%;
 `;
@@ -532,3 +560,16 @@ const DateAndTimeAdd = styled.div`
 `;
 
 const DaySelectAndWeekDaySelectWrapper = styled.div``;
+const InputContentsExceptSaveButton = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 40px;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    width: 0;
+  }
+`;

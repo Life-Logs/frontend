@@ -265,6 +265,6 @@ const RoutineBoxWrapper = styled.div`
   overflow-y: auto;
   margin: 20px 0;
   &::-webkit-scrollbar {
-    width: calc(100% - 6px);
+    width: 0;
   }
 `;
