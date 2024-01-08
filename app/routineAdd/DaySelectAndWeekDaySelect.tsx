@@ -188,7 +188,4 @@ const Time = styled.button`
 `;
 const DaySelectAndWeekDaySelectWrapper = styled.div`
   width: 100%;
-  &::-webkit-scrollbar {
-    width: 0;
-  }
 `;

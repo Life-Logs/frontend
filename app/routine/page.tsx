@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { BiEdit } from 'react-icons/bi';
 import axios from 'axios';
 import RoutineAdd from '../routineAdd/page';
+import RoutineEdit from '../routineEdit/page';
 
 interface MockData {
   name: string;
@@ -20,6 +21,7 @@ export default function Routine() {
   const [data, setData] = useState<MockData[]>([]);
   const [toggleOnOff, setToggleOnOff] = useState<boolean[]>([]);
   const [modal, setModal] = useState<boolean>(false);
+  const [editModal, setEditModal] = useState(false);
 
   const handleToggle = (e: React.MouseEvent<HTMLDivElement>, i: number) => {
     e.stopPropagation();
@@ -83,6 +85,7 @@ export default function Routine() {
       <WebSize>
         <RoutineName>루틴</RoutineName>
         {modal && <RoutineAdd setModal={setModal} />}
+        {editModal && <RoutineEdit setEditModal={setEditModal} />}
         <RoutineBoxWrapper>
           {data &&
             data.map((e, i) => (
@@ -118,7 +121,18 @@ export default function Routine() {
                       ''
                     )}
                   </TitleAndToggle>
-                  {fold[i] ? <BiEdit size='20' /> : ''}
+                  {fold[i] ? (
+                    <BiEdit
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        console.log('aa');
+                        setEditModal(!editModal);
+                      }}
+                      size='20'
+                    />
+                  ) : (
+                    ''
+                  )}
                 </TitleWrap>
                 {fold[i] ? (
                   <div className={styles.routineBoxFold}>
