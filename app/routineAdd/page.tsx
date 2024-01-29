@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useRef, useState } from 'react';
 import styled from 'styled-components';
 import DaySelectAndWeekDaySelect from './DaySelectAndWeekDaySelect';
+import DatePicker from 'react-datepicker';
 
 interface RoutineAddProps {
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -18,6 +19,7 @@ export default function RoutineAdd({ setModal }: RoutineAddProps) {
   const [view, setView] = useState<boolean>(false);
   const [goalView, setGoalView] = useState<boolean>(false);
   const [sortationView, setSortationView] = useState<boolean>(false);
+  const [startDate, setStartDate] = useState(new Date());
   const [choice, setChoice] = useState<boolean[]>([
     true,
     true,
@@ -38,6 +40,18 @@ export default function RoutineAdd({ setModal }: RoutineAddProps) {
   const tagRef = useRef();
 
   const DateValue = '1979. 12. 12';
+
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    setIsDatePickerOpen(false);
+  };
+
+  const toggleDatePicker = () => {
+    setIsDatePickerOpen(!isDatePickerOpen);
+  };
 
   const handleSelectDay = (e: any, i: number) => {
     if (e === '평일') {
@@ -80,7 +94,7 @@ export default function RoutineAdd({ setModal }: RoutineAddProps) {
     setName(event.target.value);
   };
 
-  const handleTypeChange = (event: any) => {
+  const handleGoalChange = (event: any) => {
     setType(event.target.value);
   };
 
@@ -92,6 +106,11 @@ export default function RoutineAdd({ setModal }: RoutineAddProps) {
     } else {
       tagValue = event.target.value;
     }
+  };
+
+  const handleTypeSelect = (event: any) => {
+    // console.log(event.target.innerText);
+    setType(event.target.innerText);
   };
 
   const DataValue = {
@@ -110,6 +129,7 @@ export default function RoutineAdd({ setModal }: RoutineAddProps) {
   };
 
   async function postRoutine(data) {
+    // console.log(data);
     try {
       const response = await axios.post(
         'https://dev.lifelog.devtkim.com/routine',
@@ -155,13 +175,23 @@ export default function RoutineAdd({ setModal }: RoutineAddProps) {
               {sortationView ? (
                 <SortationList>
                   {sortationArr.map((e, i) => {
-                    return <Sortation key={i}>{e}</Sortation>;
+                    return (
+                      <Sortation
+                        key={i}
+                        onClick={(e) => {
+                          handleTypeSelect(e);
+                          setSortationView(!sortationView);
+                        }}
+                      >
+                        {e}
+                      </Sortation>
+                    );
                   })}
                 </SortationList>
               ) : (
                 ''
               )}
-              {/* <InputSpace onChange={(e) => handleTypeChange(e)}/> */}
+              {/* <InputSpace onChange={(e) => handleGoalChange(e)} /> */}
             </SortationWrapper>
           </List2>
           {goalView ? (
@@ -169,7 +199,7 @@ export default function RoutineAdd({ setModal }: RoutineAddProps) {
               <ListTitle2>목표</ListTitle2>
               <InputSpace
                 placeholder='숫자만 입력 가능합니다 (0 ~ 9999)'
-                onChange={(e) => handleTypeChange(e)}
+                onChange={(e) => handleGoalChange(e)}
               />
             </List2>
           ) : (
@@ -183,15 +213,26 @@ export default function RoutineAdd({ setModal }: RoutineAddProps) {
               onKeyDown={(e) => handleTagChange(e)}
             />
           </List2>
-          {/* <TagList>태그목록 :</TagList> */}
+          <TagListWrapper>
+            {tag.map((el, i) => {
+              return <TagList key={i}>{el}</TagList>;
+            })}
+          </TagListWrapper>
 
+          {/* <TagListWrapper>태그목록 :</TagListWrapper> */}
           <SelectDateWrapper>
             <List>
               <ListTitle>날짜 및 시간</ListTitle>
             </List>
             <WhenStartAndDateWrapper>
               <WhenStart>언제부터 시작할까요?</WhenStart>
-              <DateSelect>2023.02.10</DateSelect>
+              {/* <DateSelect>2023.02.10</DateSelect> */}
+              <div>
+                <DatePicker
+                  selected={startDate}
+                  onChange={(date) => setStartDate(date)}
+                />
+              </div>
             </WhenStartAndDateWrapper>
             <WhenStartAndDateWrapper>
               <WhenStart>언제까지 할까요?</WhenStart>
@@ -337,8 +378,9 @@ const List2 = styled.div`
   display: flex;
   width: 100%;
   height: fit-content;
-  margin: 20px 0;
+  margin: 10px 0;
 `;
+
 const ListTitle = styled.p`
   font-size: 16px;
   font-weight: bold;
@@ -352,7 +394,6 @@ const ListTitle2 = styled.p`
   padding: 0 10px 10px 0;
 `;
 
-const TagList = styled.div``;
 const InputSpace = styled.input`
   border: none;
   border-bottom: 1px solid black;
@@ -549,7 +590,14 @@ const CheckboxInput = styled.input`
 `;
 
 const SortationList = styled.div``;
-const Sortation = styled.div``;
+const Sortation = styled.div`
+  background-color: white;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid gray;
+`;
 
 const DateAndTimeAdd = styled.div`
   color: #64705b;
@@ -572,4 +620,16 @@ const InputContentsExceptSaveButton = styled.div`
   &::-webkit-scrollbar {
     width: 0;
   }
+`;
+
+const TagListWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  /* margin-top: -25px; */
+`;
+const TagList = styled.div`
+  background-color: #ebf6e1;
+  border-radius: 20px;
+  padding: 7px;
+  margin-right: 10px;
 `;

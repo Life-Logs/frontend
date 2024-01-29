@@ -22,6 +22,22 @@ export default function Routine() {
   const [toggleOnOff, setToggleOnOff] = useState<boolean[]>([]);
   const [modal, setModal] = useState<boolean>(false);
   const [editModal, setEditModal] = useState(false);
+  const [removeMode, setRemoveMode] = useState(false);
+
+  const handleRemoveRoutine = async (e) => {
+    try {
+      await axios
+        .delete(`https://dev.lifelog.devtkim.com/routine/${e.id}`)
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleToggle = (e: React.MouseEvent<HTMLDivElement>, i: number) => {
     e.stopPropagation();
@@ -78,12 +94,15 @@ export default function Routine() {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [data]);
 
   return (
     <Body>
       <WebSize>
         <RoutineName>루틴</RoutineName>
+        <ActiveRemove onClick={() => setRemoveMode(!removeMode)}>
+          삭제
+        </ActiveRemove>
         {modal && <RoutineAdd setModal={setModal} />}
         {editModal && <RoutineEdit setEditModal={setEditModal} />}
         <RoutineBoxWrapper>
@@ -94,6 +113,14 @@ export default function Routine() {
                 key={i}
                 foldValue={fold[i]}
               >
+                {removeMode ? (
+                  <RemoveButton onClick={() => handleRemoveRoutine(e)}>
+                    X
+                  </RemoveButton>
+                ) : (
+                  ''
+                )}
+
                 <TitleWrap
                   onClick={() => {
                     const newFold = [...fold];
@@ -210,6 +237,7 @@ const RoutineBox = styled.div`
   transition: 0.5s;
   border: 1px solid gray;
   margin: 30px 0;
+  position: relative;
 `;
 const TitleWrap = styled.div`
   display: flex;
@@ -281,4 +309,22 @@ const RoutineBoxWrapper = styled.div`
   &::-webkit-scrollbar {
     width: 0;
   }
+`;
+
+const ActiveRemove = styled.div`
+  position: absolute;
+  top: 20px;
+  right: 40px;
+  font-size: 12px;
+  cursor: pointer;
+`;
+
+const RemoveButton = styled.button`
+  position: absolute;
+  right: 0px;
+  top: -10px;
+  border-radius: 30px;
+  padding: 2px 5px;
+  border: 1px solid gray;
+  cursor: pointer;
 `;

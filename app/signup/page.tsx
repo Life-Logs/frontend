@@ -1,8 +1,7 @@
-import Image from 'next/image'
-import styles from './page.module.css'
-import styled from 'styled-components'
-// import 
-
+import Image from 'next/image';
+import styles from './page.module.css';
+import styled from 'styled-components';
+// import
 
 // const Body = styled.div`
 //   display: flex;
@@ -15,10 +14,5 @@ import styled from 'styled-components'
 // `
 
 export default function Home() {
-  return (
-    <div className={styles.main}>
-signup
-    </div>
-  )
+  return <div className={styles.main}>signup</div>;
 }
-
