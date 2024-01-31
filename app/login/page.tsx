@@ -10,68 +10,87 @@ export default function Home() {
   const [isLogin, setIsLogin] = useState(false);
   const [userInfo, setUserInfo] = useState({});
 
-  const Rest_api_key = `${process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY}`; //REST API KEY
-  const redirect_uri = `${process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI}`; //Redirect URI
+  // const Rest_api_key = `${process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY}`; //REST API KEY
+  // const redirect_uri = `${process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI}`; //Redirect URI
   // oauth 요청 URL
   // const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${Rest_api_key}&redirect_uri=${redirect_uri}`;
-  const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${Rest_api_key}&redirect_uri=${redirect_uri}&response_type=code`;
+  // const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${Rest_api_key}&redirect_uri=${redirect_uri}&response_type=code`;
   const kakaoOnSuccess = async (data) => {
-    console.log(data);
-    const idToken = data.response.access_token;
+    try {
+      // console.log(data);
+      const idToken = data.response.access_token;
+      const rqData = {
+        accessToken: idToken,
+      };
+      const result = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`,
+        rqData
+      );
+      console.log(result);
+      if (result.status === 201) {
+        localStorage.setItem('accessToken', result.data.accessToken);
+        localStorage.setItem('refreshToken', result.data.refreshToken);
+        localStorage.setItem('userID', result.data.userid);
+        window.location.href = `http://localhost:3000/routine`;
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
+
   const kakaoOnFailure = (error) => {
     console.log(error);
   };
-  const handleLogin = async () => {
-    window.location.href = kakaoURL;
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
+  // const handleLogin = async () => {
+  //   window.location.href = kakaoURL;
+  //   const urlParams = new URLSearchParams(window.location.search);
+  //   const code = urlParams.get('code');
 
-    if (code) {
-      try {
-        const tokenResponse = await axios.post(
-          'https://kauth.kakao.com/oauth/token',
-          {
-            grant_type: 'authorization_code',
-            client_id: Rest_api_key,
-            redirect_uri: redirect_uri,
-            code: code,
-          }
-        );
+  //   if (code) {
+  //     try {
+  //       const tokenResponse = await axios.post(
+  //         'https://kauth.kakao.com/oauth/token',
+  //         {
+  //           grant_type: 'authorization_code',
+  //           client_id: Rest_api_key,
+  //           redirect_uri: redirect_uri,
+  //           code: code,
+  //         }
+  //       );
 
-        const accessToken = tokenResponse.data.access_token;
-        console.log('Access Token:', accessToken);
+  //       const accessToken = tokenResponse.data.access_token;
+  //       console.log('Access Token:', accessToken);
 
-        // 여기에서 액세스 토큰을 사용하여 카카오 API 호출 또는 필요한 작업 수행
-        // 예: 사용자 정보 가져오기
-        // const userInfoResponse = await axios.get('https://kapi.kakao.com/v2/user/me', {
-        //   headers: {
-        //     Authorization: `Bearer ${accessToken}`,
-        //   },
-        // });
+  // 여기에서 액세스 토큰을 사용하여 카카오 API 호출 또는 필요한 작업 수행
+  // 예: 사용자 정보 가져오기
+  // const userInfoResponse = await axios.get('https://kapi.kakao.com/v2/user/me', {
+  //   headers: {
+  //     Authorization: `Bearer ${accessToken}`,
+  //   },
+  // });
 
-        // setUserInfo(userInfoResponse.data);
-        // setIsLogin(true);
-      } catch (error) {
-        console.error('Error getting access token:', error);
-      }
-      // console.log(urlParams);
-      // const code = urlParams.get('code');
-      // console.log('Code:', code);
-      // const AUTHORIZATION_CODE: string = new URL(
-      //   document.location.toString()
-      // ).searchParams.get('code') as string;
-      // console.log(AUTHORIZATION_CODE);
-      // axios
-      //   .get(kakaoURL)
-      //   .then((res) => {
-      //     console.log(res);
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
-    }
-  };
+  // setUserInfo(userInfoResponse.data);
+  // setIsLogin(true);
+  // } catch (error) {
+  //   console.error('Error getting access token:', error);
+  // }
+  // console.log(urlParams);
+  // const code = urlParams.get('code');
+  // console.log('Code:', code);
+  // const AUTHORIZATION_CODE: string = new URL(
+  //   document.location.toString()
+  // ).searchParams.get('code') as string;
+  // console.log(AUTHORIZATION_CODE);
+  // axios
+  //   .get(kakaoURL)
+  //   .then((res) => {
+  //     console.log(res);
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
+  //   }
+  // };
 
   return (
     <div className={styles.main}>
