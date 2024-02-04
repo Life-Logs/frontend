@@ -116,12 +116,22 @@ export default function RoutineAdd({ setModal }: RoutineAddProps) {
   const DataValue = {
     name: name,
     type: type,
-    datetime: {
-      monday: {
-        start: '09:00',
-        end: '18:00',
+    datetime: [
+      {
+        day: ['월', '화'],
+        time: {
+          start: '09:00',
+          end: '18:00',
+        },
       },
-    },
+      {
+        day: ['수', '목'],
+        time: {
+          start: '09:00',
+          end: '12:00',
+        },
+      },
+    ],
     isActived: true,
     routineTags: tag,
     activedAt: new Date().toISOString(),
@@ -130,18 +140,21 @@ export default function RoutineAdd({ setModal }: RoutineAddProps) {
 
   async function postRoutine(data) {
     // console.log(data);
+    const token = localStorage.getItem('accessToken');
     try {
-      const response = await axios.post(
-        'https://dev.lifelog.devtkim.com/routine',
-        data,
-        {
+      const response = await axios
+        .post('https://dev.lifelog.devtkim.com/routine', data, {
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
           },
-        }
-      );
-      // console.log(response);
-      console.log(data);
+        })
+        .then((respose) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     } catch (error) {
       console.error(error);
     }

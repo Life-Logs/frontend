@@ -19,17 +19,24 @@ interface MockData {
 export default function Routine() {
   const [fold, setFold] = useState<boolean[]>([]);
   const [data, setData] = useState<MockData[]>([]);
-  const [toggleOnOff, setToggleOnOff] = useState<boolean[]>([]);
+  // const [toggleOnOff, setToggleOnOff] = useState<boolean[]>([]);
   const [modal, setModal] = useState<boolean>(false);
   const [editModal, setEditModal] = useState(false);
   const [removeMode, setRemoveMode] = useState(false);
 
   const handleRemoveRoutine = async (e) => {
     try {
+      const token = localStorage.getItem('accessToken');
       await axios
-        .delete(`https://dev.lifelog.devtkim.com/routine/${e.id}`)
+        .delete(`https://dev.lifelog.devtkim.com/routine/${e.id}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        })
         .then((response) => {
           console.log(response);
+          // window.location.reload();
         })
         .catch((error) => {
           console.log(error);
@@ -45,11 +52,18 @@ export default function Routine() {
     // const toggleOnOffValue = [...toggleOnOff]
     dataValue[i].isActived = !dataValue[i].isActived;
     // !toggleOnOffValue[i]
+    const token = localStorage.getItem('accessToken');
     axios
       .patch(
         `https://dev.lifelog.devtkim.com/routine/${dataValue[i].id}/toggle-activation`,
         {
           isActived: dataValue[i].isActived,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
         }
       )
       .then((response) => {
@@ -65,11 +79,13 @@ export default function Routine() {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem('accessToken');
     axios({
       method: 'get',
       url: 'https://dev.lifelog.devtkim.com/routine',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
     })
       .then((response) => {
@@ -80,14 +96,6 @@ export default function Routine() {
             return e.isActived ? true : false;
           })
         );
-        // const toggleArr = Array(responseValue.length).fill(
-        //     responseValue.map((e) => {
-        //             return e.isActived ? true : false
-        //         })
-        //     );
-
-        setToggleOnOff(toggleArr);
-        // setFold(toggleArr)
         setFold(Array(responseValue.length).fill(false));
         setData(responseValue);
       })
